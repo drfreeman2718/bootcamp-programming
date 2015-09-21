@@ -83,30 +83,60 @@ def gene_data(gene):
 # map from a systematic name to some info about the gene (whatever you want),
 # e.g  'YGR188C' -> 'Protein kinase involved in the cell cycle checkpoint into anaphase'
 def gene_info(gene):
-    pass
+    with open('bootcamp/data/gene_info.txt', 'r') as newfile:
+        	for geneName in newfile:
+    			geneInfo = geneName.split()
+    			if geneInfo[0] == gene:
+    				return geneInfo[2]
 
 
 # map from a systematic name to a list of GOIDs that the gene is associated with
 # e.g. 'YGR188C' -> ['GO:0005694', 'GO:0000775', 'GO:0000778', ... ]
 def gene_to_go(gene):
-    pass
+	with open('bootcamp/data/go_membership.txt', 'r') as newfile:
+		newfile.readline()
+		GOID = []
+		for line in newfile:
+			gene_list = line.split()
+			if gene_list[0] == gene:
+				GOID.append(gene_list[1])
+	return GOID
 
 
 # map from one of the GO aspects (P, F, and C, for Process, Function, Component),
 # to a list of all the GOIDs in that aspect
 # e.g. 'C' -> ['GO:0005737', 'GO:0005761', 'GO:0005763', ... ]
 def go_aspect(aspect):
-    pass
-
+    with open('bootcamp/data/go_info.txt', 'r') as newfile:
+    	newfile.readline()
+    	GOaspect = []
+    	for line in newfile:
+    		GO_list = line.split()
+    		if GO_list[2] == aspect:
+    			GOaspect.append(GO_list[0])
+	return GOaspect
 
 # map from a GOID (e.g. GO:0005737) to a *tuple* of the term, aspect, and term definition
 # e.g. 'GO:0005737' -> ('cytoplasm', 'C', 'All of the contents of a cell... (etc)'
 def go_info(goid):
-    pass
+    with open('bootcamp/data/go_info.txt', 'r') as newfile:
+    	newfile.readline()
+    	for line in newfile:
+    		GO_list = line.split()
+    		if GO_list[0] == goid:
+				return GO_list[1:]
 
 
 # the reverse of the gene_to_go function: map from a GOID
 # to a list of genes (systematic names)
 # e.g. 'GO:0005737' -> ['YAL001C', 'YAL002W', 'YAL003W', ... ]
 def go_to_gene(goid):
-    pass
+    with open('bootcamp/data/go_membership.txt', 'r') as newfile:
+		newfile.readline()
+		genes = []
+		for line in newfile:
+			gene_list = line.split()
+			if gene_list[1] == goid:
+				genes.append(gene_list[0])
+		return genes
+	
