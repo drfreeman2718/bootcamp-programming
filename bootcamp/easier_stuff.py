@@ -42,13 +42,30 @@ EXPERIMENT_FILE = os.path.join(app.root_path, 'data', 'experiment_data.txt')
 #       [('YAL001C', -0.58), ('YAL002W', 0.23), ('YAL003W', -0.25), ... ],
 #        ... ]
 def experiment():
-    pass
-
+    expt_dict = {}
+    exp = 0
+    while exp < 33:
+    	expt_dict[exp] = []
+    	exp+=1
+    	
+    with open('experiment_data.txt', 'r') as newfile:
+    	newfile.readline()
+    	for line in newfile:
+    		column_list = line.split()
+    		i = 0
+    		for column in column_list[1:]:
+    			expt_dict[i].append((column_list[0], column))
+    			i+=1
+	return expt_dict
 
 # map from a gene's systematic name to its standard name
 # e.g. gene_name('YGR188C') returns 'BUB1'
 def gene_name(gene):
-    pass
+	with open('gene_info.txt', 'r') as newfile:
+    	for geneName in newfile:
+    		geneInfo = geneName.split()
+    		if geneInfo[0] == gene:
+    			return geneInfo[1]
 
 
 # map from a gene's systematic name to a list of the values for that gene,
