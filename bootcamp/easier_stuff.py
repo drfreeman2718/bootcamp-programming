@@ -48,7 +48,7 @@ def experiment():
     	expt_dict[exp] = []
     	exp+=1
     	
-    with open('data/experiment_data.txt', 'r') as newfile:
+    with open('bootcamp/data/experiment_data.txt', 'r') as newfile:
     	newfile.readline()
     	for line in newfile:
     		column_list = line.split()
@@ -61,7 +61,7 @@ def experiment():
 # map from a gene's systematic name to its standard name
 # e.g. gene_name('YGR188C') returns 'BUB1'
 def gene_name(gene):
-	with open('data/gene_info.txt', 'r') as newfile:
+	with open('bootcamp/data/gene_info.txt', 'r') as newfile:
             for geneName in newfile:
     		geneInfo = geneName.split()
     		if geneInfo[0] == gene:
@@ -72,7 +72,12 @@ def gene_name(gene):
 # across all of the experiments.
 # e.g. gene_data('YGR188C') returns [-0.09, 0.2, -0.07, ... ]
 def gene_data(gene):
-    pass
+	with open('bootcamp/data/experiment_data.txt', 'r') as newfile:
+		newfile.readline()
+		for line in newfile:
+			expt_list = line.split()
+			if expt_list[0] == gene:
+				return expt_list[1:]
 
 
 # map from a systematic name to some info about the gene (whatever you want),
