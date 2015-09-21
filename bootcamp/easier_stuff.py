@@ -62,7 +62,7 @@ def experiment():
 # e.g. gene_name('YGR188C') returns 'BUB1'
 def gene_name(gene):
 	with open('gene_info.txt', 'r') as newfile:
-    	for geneName in newfile:
+            for geneName in newfile:
     		geneInfo = geneName.split()
     		if geneInfo[0] == gene:
     			return geneInfo[1]
