@@ -6,11 +6,13 @@
 # Feel free to add even more features if you like--the backend code is simple to figure
 # out. But don't forget to help your teammates, and to figure out your perturbation!
 
-import scipy.stats
+import scipy.stats as scistat
 
 import mpld3
-import matplotlib.pyplot
-
+import matplotlib.pyplot as plt
+import seaborn 
+import numpy as np
+import easier_stuff as eas
 # The point of this function is to calculate the enrichment scores for a single
 # experiment--the probability that the list of genes is positively or negatively
 # enriched for specific groups of genes.
@@ -31,10 +33,69 @@ import matplotlib.pyplot
 # - another list of GOIDs and enrichment scores,
 #   testing for negative enrichment (again sorted)
 #
-def calculate_enrichment(gene_data, go_to_genes, n=100):
+# 32 experiments
+# 4767 genes
+# 587 groups of genes
+# top 100 genes from experiment
+def calculate_enrichment(N=100):
     # You need to replace this with something useful
-    positive_enrichment_scores = []
-    negative_enrichment_scores = []
+    experiment_dict = eas.experiment();
+    counttop100 = {}
+    countbot100 = {}
+    goid_prob_top = {}
+    goid_prob_bot = {}
+#initialize dictionary of goids
+    with open("go_info.txt", 'r') as target:
+        target.readline();
+        for line in target:
+            lines = line.split();
+            counttop100[lines[0]] = np.zeros(32) #goid counts in top 100
+            countbot100[lines[0]] = np.zeros(32) #goid counts in top 100
+            goid_prob_top[lines[0]] = np.zeros(32) #goid prob
+            goid_prob_bot[lines[0]] = np.zeros(32) #goid prob
+    #add values for goid
+    for i in range(0, 33):
+        sorted_genes = experiment_dict[i].sort(key=lambda tup: tup[1])
+        top100 = sorted_genes[0:100]
+        bot100 = sorted_genes[-100:0]
+        #go hrough top 100, want list of goIds, count for top/bot100
+        for j in range(0, 100):
+            counttop100[ gene_to_go[ top100[j][0] ] ][i] += 1
+            countbot100[ gene_to_go[ top100[j][0] ] ][i] += 1
+            
+        #hypergeom, what is the probability i got that many counts from top 100
+        #top
+        for j in counttop100:
+        
+            gene_per_go = len(go_to_gene[j])
+            [ M, n, N] = [4767, gene_per_go, N];
+            rv = scistat.hypergeom(M, n, N)
+            x = np.arange(0, counttop100[j][i] + 1)
+            survival_exp = rv.sf(x)
+            goid_prob_top[j][i] = survival_exp
+
+        for j in countbot100:
+            gene_per_go = len(go_to_gene[j])
+            [ M, n, N] = [4767, gene_per_go, N];
+            rv = scistat.hypergeom(M, n, N)
+            x = np.arange(0, countbot100[j][i] + 1)
+            survival_exp = rv.sf(x)
+            goid_prob_bot[j][i] = survival_exp
+
+#for j in experiment_dict[i]:
+            
+        #    mainstuff[ gene_to_go[j[0]] ][i] += j[1]
+#sort by exp values
+#        mainstuff.sort(key=lambda tup: tup[1])
+#take top 100
+            
+
+    heatmaptop = plt.pcolor(goid_prob_top);
+    heatmapbot = plt.pcolor(goid_prob_bot);
+    plt.show()
+
+    positive_enrichment_scores = goid_prob_top;
+    negative_enrichment_scores = goid_prob_bot;
 
     return positive_enrichment_scores,negative_enrichment_scores
 
@@ -137,3 +198,10 @@ def plot_experiment(gene_data):
 #
 def go_network(goid_or_gene, is_goid=True, n=2):
     return None
+
+def main():
+    calculate_enrichment();
+    
+
+if __name__ == "__main__":
+    main();
